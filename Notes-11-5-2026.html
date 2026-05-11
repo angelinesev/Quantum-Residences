@@ -1,0 +1,225 @@
+<html>
+        <head><title>Downloaded HTML</title></head>
+        <body>
+            <pre style="white-space: pre-wrap; word-wrap: break-word;">(function() {
+    const appId = "quantum-residences";
+    
+    // --- CONFIG ---
+    const iconColor = "#E7A025"; 
+    const textColor = "#FFFFFF"; 
+    const accentBlue = "#1eacd4"; 
+    const btnGradient = "linear-gradient(90deg, #E7A025 0%, #B2564A 50%, #742C7B 100%)";
+    
+    const horizonLogo = "https://github.com/angelinesev/Quantum-Residences/blob/main/horizon.png?raw=true";
+    const quantumLogo = "https://github.com/angelinesev/Quantum-Residences/blob/main/qr-logo.png?raw=true";
+    const heroBg = "https://github.com/angelinesev/Quantum-Residences/blob/main/CERULEAN.png?raw=true";
+
+    const existing = document.getElementById(appId);
+    if (existing) existing.remove();
+
+    const injectStyles = () => {
+        const styleId = appId + "-style";
+        if (document.getElementById(styleId)) document.getElementById(styleId).remove();
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.innerHTML = `
+            #${appId} {
+                font-family: 'Inter', sans-serif !important;
+                z-index: 2147483646;
+                position: fixed; inset: 0;
+                color: ${textColor};
+                height: 100dvh; overflow: hidden;
+                background: transparent;
+            }
+
+            /* --- SCREEN 1: HERO VIEW --- */
+            #hero-view { 
+                position: absolute; inset: 0; display: flex; align-items: center; 
+                padding: 0 8vw; z-index: 200; 
+                opacity: 0; transition: opacity 0.8s ease;
+            }
+            #hero-view.ready { opacity: 1; }
+
+            .hero-bg-shield { position: absolute; inset: 0; z-index: -1; background: #000; }
+            .hero-static-img {
+                position: absolute; inset: 0;
+                background: url('${heroBg}') center/cover no-repeat;
+                opacity: 0; transition: opacity 0.5s ease;
+            }
+            #bg-shield.loaded .hero-static-img { opacity: 1; }
+            #bg-shield::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+
+            .hero-branding {
+                position: absolute; top: 6dvh; left: 8vw;
+                display: flex; align-items: center; gap: 3em;
+            }
+
+            .hero-content { max-width: 500px; text-align: left; }
+            
+            .title-divider {
+                width: 360px; height: 1.5px; 
+                background: rgba(255,255,255,0.5); 
+                margin: 25px 0 35px 0;
+                opacity: 0;
+            }
+
+            @keyframes revealUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .anim-1, .anim-3, .anim-4, .anim-5, .title-divider { opacity: 0; }
+            
+            #hero-view.ready .anim-1 { animation: revealUp 0.8s forwards 0.1s; }
+            #hero-view.ready .anim-3 { animation: revealUp 0.8s forwards 0.3s; }
+            #hero-view.ready .title-divider { animation: revealUp 0.8s forwards 0.4s; }
+            #hero-view.ready .anim-4 { animation: revealUp 0.8s forwards 0.5s; }
+            #hero-view.ready .anim-5 { animation: revealUp 0.8s forwards 0.6s; }
+
+            .hero-title { font-family: 'Lato', sans-serif !important; font-size: clamp(2rem, 5vw, 7rem); font-weight: 700; line-height: 0.9; color: #fff; margin: 0; text-transform: uppercase; }
+            .hero-desc { font-family: 'Inter', sans-serif !important; font-weight: 200; font-size: 14px; line-height: 1.6; margin-bottom: 35px; opacity: 0; }
+
+            /* --- SCREEN 2: GUIDE VIEW --- */
+            #guide-view {
+                position: absolute; inset: 0; z-index: 100;
+                background: rgba(0, 0, 0, 0.5) !important;
+                backdrop-filter: blur(12px) !important;
+                -webkit-backdrop-filter: blur(12px) !important;
+                display: none; 
+                flex-direction: column; align-items: center; justify-content: center; 
+                padding: 10vh 10vw; box-sizing: border-box;
+                opacity: 0; transform: scale(1.05);
+                transition: opacity 0.8s ease, transform 0.8s ease;
+            }
+            #guide-view.active { display: flex; opacity: 1; transform: scale(1); }
+
+            .branding-header { position: absolute !important; top: 5vh !important; right: 5vw !important; display: flex !important; align-items: center !important; gap: 3em !important; }
+            .main-stage { display: flex !important; align-items: center; justify-content: center; gap: 8vw; width: 100%; margin-bottom: 5vh; }
+            .architectural-divider { width: 1px; height: 20vh; background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent); }
+            .content-column { display: flex; flex-direction: column; align-items: center; text-align: center; width: 28em; }
+            .icon-suite { display: flex; align-items: center; gap: 2.5em; margin-bottom: 3em; }
+            .serif-label { font-family: 'Lato', sans-serif !important; font-size: 1.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6em; color: white !important; }
+            .sans-description { font-family: 'Inter', sans-serif !important; font-weight: 200; font-size: 14px; line-height: 1.6; color: white !important; opacity: 0.9; }
+
+            /* BUTTONS - REMOVED RADIUS */
+            .btn-base { 
+                cursor: pointer; 
+                text-transform: uppercase; 
+                transition: 0.4s; 
+                letter-spacing: 0.2em; 
+                border: none; 
+                font-family: 'Inter', sans-serif; 
+                font-weight: 600;
+                border-radius: 0 !important; /* Forces sharp corners */
+            }
+            .btn-architectural { 
+                background: ${btnGradient}; 
+                color: #FFFFFF; 
+                padding: 1.3em 6em; 
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
+                font-size: 0.85em; 
+            }
+
+            @keyframes mechanicalPress { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+            .key-cap { stroke: ${iconColor}; stroke-width: 0.9; fill: transparent !important; animation: mechanicalPress 2.8s infinite ease-in-out; }
+            @keyframes mousePan { 0%, 100% { transform: translateX(-15px); } 50% { transform: translateX(15px); } }
+            .mouse-fill { fill: ${iconColor}; animation: mousePan 4s infinite ease-in-out; }
+            .bloom-ring { transform-origin: 25px 25px; animation: pulseLuxeBloom 3s infinite cubic-bezier(0.25, 0, 0.3, 1); }
+            @keyframes pulseLuxeBloom { 0% { transform: scale(0.5); opacity: 0; } 40% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.6); opacity: 0; } }
+            @keyframes organicTravelClick { 0% { transform: translate(-2em, 2em); opacity: 0; 15% { opacity: 1; } 50% { transform: translate(11.2em, 0.6em); } 60% { transform: translate(11.2em, 0.6em) scale(0.85); } 70% { transform: translate(11.2em, 0.6em) scale(1); } 85% { opacity: 1; } 100% { transform: translate(15em, -2em); opacity: 0; } }
+            .cursor-action { animation: organicTravelClick 4.5s infinite ease-in-out; transform-origin: 4px 4px; }
+        `;
+        document.head.appendChild(style);
+    };
+
+    const createUI = () => {
+        const overlay = document.createElement('div');
+        overlay.id = appId;
+        overlay.innerHTML = `
+            <div id="hero-view">
+                <div class="hero-bg-shield" id="bg-shield"><div class="hero-static-img"></div></div>
+                <div class="hero-branding anim-1">
+                    <img src="${horizonLogo}" style="width:9em; height:auto;">
+                    <img src="${quantumLogo}" style="width:6.5em; height:auto;">
+                </div>
+                <div class="hero-content">
+                    <h1 class="hero-title anim-3">QUANTUM<br><span style="font-weight:200;">RESIDENCES</span></h1>
+                    <div class="title-divider"></div>
+                    <p class="hero-desc anim-4">Strategically located near the intersection of Taft and Buendia, Quantum Residences provides a central location and full set of amenities to help motivated young professionals in their pursuit of career, interests, and causes.</p>
+                    <button class="btn-base btn-architectural anim-5" id="to-guide">Enter Quantum Residences</button>
+                </div>
+            </div>
+
+            <div id="guide-view">
+                <div class="branding-header">
+                    <img src="${horizonLogo}" style="width:9em">
+                    <img src="${quantumLogo}" style="width:6em">
+                </div>
+                <div class="main-stage">
+                    <div class="content-column">
+                        <div class="icon-suite">
+                            <div class="mouse-fill"><svg width="5.5em" height="5.5em" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="6"/><rect x="11.5" y="5" width="1" height="4" rx="0.5" fill="white" opacity="0.8"/></svg></div>
+                            <div style="width:1px; height:3em; background:${iconColor}; opacity:0.3"></div>
+                            <svg width="11em" height="9em" viewBox="0 0 44 34">
+                                <g class="key-cap k-w"><rect x="17" y="2" width="10" height="10" rx="2.5"/><text x="22" y="8.5" text-anchor="middle" font-size="5" font-family="Inter" font-weight="600" fill="${iconColor}" stroke="none">W</text></g>
+                                <g class="key-cap k-a"><rect x="2" y="14" width="10" height="10" rx="2.5"/><text x="7" y="20.5" text-anchor="middle" font-size="5" font-family="Inter" font-weight="600" fill="${iconColor}" stroke="none">A</text></g>
+                                <g class="key-cap k-s"><rect x="17" y="14" width="10" height="10" rx="2.5"/><text x="22" y="20.5" text-anchor="middle" font-size="5" font-family="Inter" font-weight="600" fill="${iconColor}" stroke="none">S</text></g>
+                                <g class="key-cap k-d"><rect x="32" y="14" width="10" height="10" rx="2.5"/><text x="37" y="20.5" text-anchor="middle" font-size="5" font-family="Inter" font-weight="600" fill="${iconColor}" stroke="none">D</text></g>
+                            </svg>
+                        </div>
+                        <p class="serif-label">Perspective</p>
+                        <p class="sans-description">Drag your mouse or use the keys to pan smoothly across the panoramic architecture.</p>
+                    </div>
+                    <div class="architectural-divider"></div>
+                    <div class="content-column">
+                        <div class="icon-suite" style="position: relative;">
+                            <div class="cursor-action"><svg width="5.5em" height="5.5em" viewBox="0 0 24 24"><path d="M4 4L12 22L15 15L22 12L4 4Z" fill="${iconColor}" stroke="${iconColor}" stroke-width="0.8"/></svg></div>
+                            <div style="width:1px; height:3em; background:${iconColor}; opacity:0.3"></div>
+                            <svg width="7em" height="7em" viewBox="0 0 50 50">
+                                <circle class="bloom-ring" cx="25" cy="25" r="14" stroke="${iconColor}" stroke-width="1" stroke-dasharray="3 4" fill="none"/><circle cx="25" cy="25" r="4" fill="${iconColor}"/>
+                            </svg>
+                        </div>
+                        <p class="serif-label">Navigation</p>
+                        <p class="sans-description">Select the pulsating hotspots within the room to move seamlessly between different environments.</p>
+                    </div>
+                </div>
+                <button class="btn-base btn-architectural" id="start-btn">Start Tour</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const img = new Image();
+        img.src = heroBg;
+        const reveal = () => {
+            document.getElementById('bg-shield').classList.add('loaded');
+            document.getElementById('hero-view').classList.add('ready');
+        };
+        if (img.complete) reveal(); else img.onload = reveal;
+
+        document.getElementById('to-guide').onclick = function() {
+            const hero = document.getElementById('hero-view');
+            const guide = document.getElementById('guide-view');
+            guide.style.display = 'flex';
+            hero.style.opacity = '0';
+            setTimeout(() => { guide.classList.add('active'); }, 50);
+            setTimeout(() => { hero.style.display = 'none'; }, 800);
+        };
+
+        document.getElementById('start-btn').onclick = function() {
+            overlay.style.transition = 'opacity 0.5s ease';
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 500);
+        };
+    };
+
+    const fonts = document.createElement('link');
+    fonts.rel = 'stylesheet';
+    fonts.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600&family=Lato:wght@400;700&display=swap';
+    document.head.appendChild(fonts);
+
+    injectStyles();
+    if (document.readyState === 'complete' || document.readyState === 'interactive') createUI();
+    else window.addEventListener('DOMContentLoaded', createUI);
+})();</pre>
+        </body>
+    </html>
